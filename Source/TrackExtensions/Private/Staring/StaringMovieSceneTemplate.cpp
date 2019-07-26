@@ -72,7 +72,7 @@ struct FStaringExecutionToken : IMovieSceneExecutionToken, FStaringTrackToken
 
 		TArrayView<TWeakObjectPtr<>> OperandObjects = Player.FindBoundObjects(Operand);
 		TArrayView<TWeakObjectPtr<>> TargetObjects = Player.FindBoundObjects(StaringTargetOperand);
-		if (!TargetObjects.Num() && !OperandObjects.Num())
+		if (!TargetObjects.Num() || !OperandObjects.Num())
 		{
 			return;
 		}
