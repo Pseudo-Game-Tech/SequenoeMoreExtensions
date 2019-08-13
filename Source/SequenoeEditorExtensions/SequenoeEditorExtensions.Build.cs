@@ -18,7 +18,6 @@ public class SequenoeEditorExtensions : ModuleRules
         PrivateIncludePaths.AddRange(
             new string[] {
                 "SequenoeEditorExtensions/Private/Staring",
-                "SequenoeEditorExtensions/Private/RichText",
                 "SequenoeEditorExtensions/Private/LevelSequenceEditorUmg",
             }
             );

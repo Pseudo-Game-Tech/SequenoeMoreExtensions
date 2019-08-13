@@ -37,12 +37,39 @@ void ULevelSequenceUmg::AddToEditorViewport(int32 ZOrder)
 			{
 				if (SOverlay * Overlay = (SOverlay*)EditorViewport->GetViewportWidget().Pin().Get()->GetContent().Get())
 				{
-					EditorPreviewOverlay = EditorViewport->GetViewportWidget().Pin().Get()->GetContent();
+					FChildren* Children = Overlay->GetChildren();
+					int32 Num = Children->Num();
+					SWidget* GameLayerManager = nullptr;
+					for (int32 i = 0; i < Num; ++i)
+					{
+						SWidget& Child = Children->GetChildAt(i).Get();
+						if (Child.GetType() == FName(TEXT("SGameLayerManager")))
+						{
+							GameLayerManager = &Child;
+							break;
+						}
+					}
+					SWidget& DPIScaler = GameLayerManager->GetChildren()->GetChildAt(0).Get();
+					SWidget& VerticalBox = DPIScaler.GetChildren()->GetChildAt(0).Get();
+
+					Children = VerticalBox.GetChildren();
+					Num = Children->Num();
+					for (int32 i = 0; i < Num; ++i)
+					{
+						SWidget& Child = Children->GetChildAt(i).Get();
+						if (Child.GetType() == FName(TEXT("SOverlay")))
+						{
+							EditorPreviewOverlay = Children->GetChildAt(i);
+							Overlay = (SOverlay*)& Child;
+							break;
+						}
+					}
 					Overlay->AddSlot()
 						[
 							FullScreenCanvas
 						];
 				}
+
 			}
 		}
 	}
