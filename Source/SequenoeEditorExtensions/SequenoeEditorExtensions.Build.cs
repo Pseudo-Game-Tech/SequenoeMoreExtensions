@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class TrackEditorExtensions : ModuleRules
+public class SequenoeEditorExtensions : ModuleRules
 {
-	public TrackEditorExtensions(ReadOnlyTargetRules Target) : base(Target)
+	public SequenoeEditorExtensions(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -17,7 +17,9 @@ public class TrackEditorExtensions : ModuleRules
 
         PrivateIncludePaths.AddRange(
             new string[] {
-                "TrackEditorExtensions/Private/Staring",
+                "SequenoeEditorExtensions/Private/Staring",
+                "SequenoeEditorExtensions/Private/RichText",
+                "SequenoeEditorExtensions/Private/LevelSequenceEditorUmg",
             }
             );
 
@@ -53,7 +55,9 @@ public class TrackEditorExtensions : ModuleRules
                 "MovieSceneTools",
                 "MovieScene",
                 "LevelEditor",
-                "TrackExtensions",
+                "LevelSequence",
+                "SequenoeExtensions",
+                "UMG",
             }
             );
 
