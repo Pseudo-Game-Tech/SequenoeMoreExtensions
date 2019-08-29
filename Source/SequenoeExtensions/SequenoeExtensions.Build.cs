@@ -12,6 +12,7 @@ public class SequenoeExtensions : ModuleRules
 			new string[] {
                 "SequenoeExtensions/Private/Staring",
                 "SequenoeExtensions/Private/LevelSequenceUmg",
+				"SequenoeExtensions/Private/SkeletalAnimationRateTrack",
 			}
 			);
 			
@@ -35,6 +36,7 @@ public class SequenoeExtensions : ModuleRules
                 "SlateCore",
                 "Slate",
                 "LevelSequence",
+                "AnimGraphRuntime",
             }
 			);
 

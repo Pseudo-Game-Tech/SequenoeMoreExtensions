@@ -19,6 +19,7 @@ public class SequenoeEditorExtensions : ModuleRules
             new string[] {
                 "SequenoeEditorExtensions/Private/Staring",
                 "SequenoeEditorExtensions/Private/LevelSequenceEditorUmg",
+                "SequenoeEditorExtensions/Private/SkeletalAnimationRateTrack",
             }
             );
 
