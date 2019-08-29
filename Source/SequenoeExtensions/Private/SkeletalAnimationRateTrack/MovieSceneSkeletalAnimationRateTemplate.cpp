@@ -12,22 +12,26 @@
 #include "UObject/ObjectKey.h"
 #include "AnimSequencerInstance.h"
 
-bool ShouldUsePreviewPlayback(IMovieScenePlayer& Player, UObject& RuntimeObject)
+namespace SequenoeMoreExtensions
 {
-	// we also use PreviewSetAnimPosition in PIE when not playing, as we can preview in PIE
-	bool bIsNotInPIEOrNotPlaying = (RuntimeObject.GetWorld() && !RuntimeObject.GetWorld()->HasBegunPlay()) || Player.GetPlaybackStatus() != EMovieScenePlayerStatus::Playing;
-	return GIsEditor && bIsNotInPIEOrNotPlaying;
-}
 
-bool CanPlayAnimation(USkeletalMeshComponent* SkeletalMeshComponent, UAnimSequenceBase* AnimAssetBase)
-{
-	return (SkeletalMeshComponent->SkeletalMesh && SkeletalMeshComponent->SkeletalMesh->Skeleton &&
-		(!AnimAssetBase || SkeletalMeshComponent->SkeletalMesh->Skeleton->IsCompatible(AnimAssetBase->GetSkeleton())));
-}
+	bool ShouldUsePreviewPlayback(IMovieScenePlayer& Player, UObject& RuntimeObject)
+	{
+		// we also use PreviewSetAnimPosition in PIE when not playing, as we can preview in PIE
+		bool bIsNotInPIEOrNotPlaying = (RuntimeObject.GetWorld() && !RuntimeObject.GetWorld()->HasBegunPlay()) || Player.GetPlaybackStatus() != EMovieScenePlayerStatus::Playing;
+		return GIsEditor && bIsNotInPIEOrNotPlaying;
+	}
 
-void ResetAnimSequencerInstance(UObject& ObjectToRestore, IMovieScenePlayer& Player)
-{
-	CastChecked<UAnimSequencerInstance>(&ObjectToRestore)->ResetNodes();
+	bool CanPlayAnimation(USkeletalMeshComponent* SkeletalMeshComponent, UAnimSequenceBase* AnimAssetBase)
+	{
+		return (SkeletalMeshComponent->SkeletalMesh && SkeletalMeshComponent->SkeletalMesh->Skeleton &&
+			(!AnimAssetBase || SkeletalMeshComponent->SkeletalMesh->Skeleton->IsCompatible(AnimAssetBase->GetSkeleton())));
+	}
+
+	void ResetAnimSequencerInstance(UObject& ObjectToRestore, IMovieScenePlayer& Player)
+	{
+		CastChecked<UAnimSequencerInstance>(&ObjectToRestore)->ResetNodes();
+	}
 }
 
 struct FStopPlayingMontageTokenProducer : IMovieScenePreAnimatedTokenProducer
@@ -151,7 +155,7 @@ struct FMontagePlayerPerSectionData
 	int32 MontageInstanceId;
 };
 
-namespace MovieScene
+namespace SequenoeMoreExtensions
 {
 	struct FBlendedAnimation
 	{
@@ -394,7 +398,7 @@ namespace MovieScene
 
 }	// namespace MovieScene
 
-template<> FMovieSceneAnimTypeID GetBlendingDataType<MovieScene::FBlendedAnimation>()
+template<> FMovieSceneAnimTypeID GetBlendingDataType<SequenoeMoreExtensions::FBlendedAnimation>()
 {
 	static FMovieSceneAnimTypeID TypeID = FMovieSceneAnimTypeID::Unique();
 	return TypeID;
@@ -421,11 +425,11 @@ void FMovieSceneSkeletalAnimationRateSectionTemplate::Evaluate(const FMovieScene
 		check(BlendType.IsValid());
 
 		// Ensure the accumulator knows how to actually apply component transforms
-		FMovieSceneBlendingActuatorID ActuatorTypeID = MovieScene::FComponentAnimationActuator::GetActuatorTypeID();
+		FMovieSceneBlendingActuatorID ActuatorTypeID = SequenoeMoreExtensions::FComponentAnimationActuator::GetActuatorTypeID();
 		FMovieSceneBlendingAccumulator& Accumulator = ExecutionTokens.GetBlendingAccumulator();
-		if (!Accumulator.FindActuator<MovieScene::FBlendedAnimation>(ActuatorTypeID))
+		if (!Accumulator.FindActuator<SequenoeMoreExtensions::FBlendedAnimation>(ActuatorTypeID))
 		{
-			Accumulator.DefineActuator(ActuatorTypeID, MakeShared<MovieScene::FComponentAnimationActuator>());
+			Accumulator.DefineActuator(ActuatorTypeID, MakeShared<SequenoeMoreExtensions::FComponentAnimationActuator>());
 		}
 
 		// Add the blendable to the accumulator
@@ -433,7 +437,7 @@ void FMovieSceneSkeletalAnimationRateSectionTemplate::Evaluate(const FMovieScene
 			Params.Animation, EvalTime, Weight, ExecutionTokens.GetCurrentScope(), Params.SlotName, GetSourceSection(), Params.bSkipAnimNotifiers,
 			Params.bForceCustomMode
 		);
-		ExecutionTokens.BlendToken(ActuatorTypeID, TBlendableToken<MovieScene::FBlendedAnimation>(AnimParams, BlendType.Get(), 1.f));
+		ExecutionTokens.BlendToken(ActuatorTypeID, TBlendableToken<SequenoeMoreExtensions::FBlendedAnimation>(AnimParams, BlendType.Get(), 1.f));
 	}
 }
 

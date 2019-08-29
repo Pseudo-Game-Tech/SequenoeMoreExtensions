@@ -65,7 +65,7 @@ UMovieSceneSkeletalAnimationRateSection::UMovieSceneSkeletalAnimationRateSection
 	ChannelProxyData.Add(Params.Weight);
 	ChannelProxyData.Add(Params.PlayRate);
 
-	ChannelProxy = MakeShared<FMovieSceneChannelProxy>(ChannelProxyData);
+	ChannelProxy = MakeShared<FMovieSceneChannelProxy>(MoveTemp(ChannelProxyData));
 
 #endif
 }
