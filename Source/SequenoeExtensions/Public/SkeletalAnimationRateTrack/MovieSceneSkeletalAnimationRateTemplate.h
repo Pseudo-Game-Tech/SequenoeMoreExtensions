@@ -14,19 +14,17 @@ struct FMovieSceneSkeletalAnimationRateSectionTemplateParameters : public FMovie
 	GENERATED_BODY()
 
 		FMovieSceneSkeletalAnimationRateSectionTemplateParameters() {}
-	FMovieSceneSkeletalAnimationRateSectionTemplateParameters(const FMovieSceneSkeletalAnimationRateParams& BaseParams, FFrameNumber InSectionStartTime, FFrameNumber InSectionEndTime)
+	FMovieSceneSkeletalAnimationRateSectionTemplateParameters(const FMovieSceneSkeletalAnimationRateParams& BaseParams, FFrameNumber _InSectionStartTime, FFrameNumber _InSectionEndTime)
 		: FMovieSceneSkeletalAnimationRateParams(BaseParams)
-		, SectionStartTime(InSectionStartTime)
-		, SectionEndTime(InSectionEndTime)
 	{}
 
-	float MapTimeToAnimation(FFrameTime InPosition, FFrameRate InFrameRate) const;
+	float MapTimeToAnimation(FFrameTime InPosition) const;
 
-	UPROPERTY()
+	/*UPROPERTY()
 		FFrameNumber SectionStartTime;
 
 	UPROPERTY()
-		FFrameNumber SectionEndTime;
+		FFrameNumber SectionEndTime;*/
 };
 
 USTRUCT()

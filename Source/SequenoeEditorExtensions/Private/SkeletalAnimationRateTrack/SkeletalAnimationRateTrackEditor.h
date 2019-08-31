@@ -75,7 +75,6 @@ private:
 	FKeyPropertyResult AddKeyInternal(FFrameNumber KeyTime, UObject* Object, class UAnimSequenceBase* AnimSequence, UMovieSceneTrack* Track, int32 RowIndex);
 };
 
-
 /** Class for animation sections */
 class FSkeletalAnimationRateSection
 	: public ISequencerSection
@@ -87,10 +86,10 @@ public:
 	FSkeletalAnimationRateSection(UMovieSceneSection& InSection, TWeakPtr<ISequencer> InSequencer);
 
 	/** Virtual destructor. */
-	virtual ~FSkeletalAnimationRateSection() { }
+	virtual ~FSkeletalAnimationRateSection();
 
 public:
-
+	
 	// ISequencerSection interface
 
 	virtual UMovieSceneSection* GetSectionObject() override;
@@ -105,11 +104,12 @@ public:
 	virtual void BuildSectionContextMenu(FMenuBuilder& MenuBuilder, const FGuid& InObjectBinding) override;
 
 private:
-
 	bool CreatePoseAsset(const TArray<UObject*> NewAssets, FGuid InObjectBinding);
 	void HandleCreatePoseAsset(FGuid InObjectBinding);
-
+	void UpdateSectionData();
 private:
+
+	FDelegateHandle OnMovieSceneDataChangedDelegateHandle;
 
 	/** The section we are visualizing */
 	UMovieSceneSkeletalAnimationRateSection& Section;

@@ -35,6 +35,10 @@ struct FMovieSceneSkeletalAnimationRateParams
 	UPROPERTY()
 		FMovieSceneFloatChannel PlayRate;
 
+	/** 片段中每帧动画播放得位置 (需要在关键帧或片段长度变化时重新计算更新) */
+	UPROPERTY()
+		TArray<float> PlayPosition;
+
 	/** Reverse the playback of the animation clip */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
 		uint32 bReverse : 1;
@@ -77,7 +81,7 @@ public:
 		FMovieSceneSkeletalAnimationRateParams Params;
 
 	/** Get Frame Time as Animation Time*/
-	SEQUENOEEXTENSIONS_API float MapTimeToAnimation(FFrameTime InPosition, FFrameRate InFrameRate) const;
+	SEQUENOEEXTENSIONS_API float MapTimeToAnimation(FFrameTime InPosition) const;
 
 protected:
 

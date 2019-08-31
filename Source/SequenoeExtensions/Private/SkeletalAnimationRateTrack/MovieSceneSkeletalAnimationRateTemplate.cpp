@@ -408,13 +408,13 @@ FMovieSceneSkeletalAnimationRateSectionTemplate::FMovieSceneSkeletalAnimationRat
 	: Params(InSection.Params, InSection.GetInclusiveStartFrame(), InSection.GetExclusiveEndFrame())
 {
 }
-
+__pragma(optimize("", off))
 void FMovieSceneSkeletalAnimationRateSectionTemplate::Evaluate(const FMovieSceneEvaluationOperand& Operand, const FMovieSceneContext& Context, const FPersistentEvaluationData& PersistentData, FMovieSceneExecutionTokens& ExecutionTokens) const
 {
 	if (Params.Animation)
 	{
 		// calculate the time at which to evaluate the animation
-		float EvalTime = Params.MapTimeToAnimation(Context.GetTime(), Context.GetFrameRate());
+		float EvalTime = Params.MapTimeToAnimation(Context.GetTime());
 
 		float ManualWeight = 1.f;
 		Params.Weight.Evaluate(Context.GetTime(), ManualWeight);
@@ -441,28 +441,8 @@ void FMovieSceneSkeletalAnimationRateSectionTemplate::Evaluate(const FMovieScene
 	}
 }
 
-float FMovieSceneSkeletalAnimationRateSectionTemplateParameters::MapTimeToAnimation(FFrameTime InPosition, FFrameRate InFrameRate) const
+float FMovieSceneSkeletalAnimationRateSectionTemplateParameters::MapTimeToAnimation(FFrameTime InPosition) const
 {
-	InPosition = FMath::Clamp(InPosition, FFrameTime(SectionStartTime), FFrameTime(SectionEndTime - 1));
-
-	float Rate = 1.f;
-	PlayRate.Evaluate(InPosition, Rate);
-
-	const float SectionPlayRate = Rate * Animation->RateScale;
-	const float AnimPlayRate = FMath::IsNearlyZero(SectionPlayRate) ? 1.0f : SectionPlayRate;
-
-	const float SeqLength = GetSequenceLength() - InFrameRate.AsSeconds(StartFrameOffset + EndFrameOffset);
-
-	float AnimPosition = FFrameTime::FromDecimal((InPosition - SectionStartTime).AsDecimal() * AnimPlayRate) / InFrameRate;
-	if (SeqLength > 0.f)
-	{
-		AnimPosition = FMath::Fmod(AnimPosition, SeqLength);
-	}
-	AnimPosition += InFrameRate.AsSeconds(StartFrameOffset);
-	if (bReverse)
-	{
-		AnimPosition = (SeqLength - (AnimPosition - InFrameRate.AsSeconds(StartFrameOffset))) + InFrameRate.AsSeconds(StartFrameOffset);
-	}
-
-	return AnimPosition;
+	return PlayPosition[FMath::Min(PlayPosition.Num()-1, InPosition.GetFrame().Value)];
 }
+__pragma(optimize("", on))

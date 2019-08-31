@@ -248,10 +248,10 @@ void UMovieSceneSkeletalAnimationRateSection::GetSnapTimes(TArray<FFrameNumber>&
 	}
 }
 
-float UMovieSceneSkeletalAnimationRateSection::MapTimeToAnimation(FFrameTime InPosition, FFrameRate InFrameRate) const
+float UMovieSceneSkeletalAnimationRateSection::MapTimeToAnimation(FFrameTime InPosition) const
 {
 	FMovieSceneSkeletalAnimationRateSectionTemplateParameters TemplateParams(Params, GetInclusiveStartFrame(), GetExclusiveEndFrame());
-	return TemplateParams.MapTimeToAnimation(InPosition, InFrameRate);
+	return TemplateParams.MapTimeToAnimation(InPosition);
 }
 
 float UMovieSceneSkeletalAnimationRateSection::GetTotalWeightValue(FFrameTime InTime) const

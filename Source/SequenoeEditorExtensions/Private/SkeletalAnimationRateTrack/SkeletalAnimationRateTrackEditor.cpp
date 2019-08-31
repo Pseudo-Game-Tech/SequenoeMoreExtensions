@@ -44,6 +44,7 @@
 #include "Engine/SimpleConstructionScript.h"
 #include "Engine/Blueprint.h"
 #include "Matinee/InterpTrackAnimControl.h"
+#include "Channels/MovieSceneFloatChannel.h"
 
 namespace SkeletalAnimationRateEditorConstants
 {
@@ -150,7 +151,24 @@ FSkeletalAnimationRateSection::FSkeletalAnimationRateSection(UMovieSceneSection&
 	, Sequencer(InSequencer)
 	, InitialStartOffsetDuringResize(0)
 	, InitialStartTimeDuringResize(0)
-{ }
+{
+	UpdateSectionData();
+	OnMovieSceneDataChangedDelegateHandle = Sequencer.Pin().Get()->OnMovieSceneDataChanged().AddLambda([this](EMovieSceneDataChangeType ChangeType)
+		{
+			if (ChangeType == EMovieSceneDataChangeType::TrackValueChanged || ChangeType == EMovieSceneDataChangeType::TrackValueChangedRefreshImmediately)
+			{
+				UpdateSectionData();
+			}
+		});
+}
+
+FSkeletalAnimationRateSection::~FSkeletalAnimationRateSection()
+{
+	if (Sequencer.Pin().IsValid())
+	{
+		Sequencer.Pin().Get()->OnMovieSceneDataChanged().Remove(OnMovieSceneDataChangedDelegateHandle);
+	}
+}
 
 
 UMovieSceneSection* FSkeletalAnimationRateSection::GetSectionObject()
@@ -234,7 +252,7 @@ int32 FSkeletalAnimationRateSection::OnPaintSection(FSequencerSectionPainter& Pa
 			const float Time = TimeToPixelConverter.FrameToPixel(CurrentTime);
 
 			// Draw the current time next to the scrub handle
-			const float AnimTime = Section.MapTimeToAnimation(CurrentTime, TickResolution);
+			const float AnimTime = Section.MapTimeToAnimation(CurrentTime);
 			int32 FrameTime = Section.Params.Animation->GetFrameAtTime(AnimTime);
 			FString FrameString = FString::FromInt(FrameTime);
 
@@ -306,6 +324,7 @@ void FSkeletalAnimationRateSection::ResizeSection(ESequencerSectionResizeMode Re
 	}
 
 	ISequencerSection::ResizeSection(ResizeMode, ResizeTime);
+	UpdateSectionData();
 }
 
 void FSkeletalAnimationRateSection::BeginSlipSection()
@@ -331,6 +350,42 @@ void FSkeletalAnimationRateSection::SlipSection(FFrameNumber SlipTime)
 	Section.Params.StartFrameOffset = StartOffset;
 
 	ISequencerSection::SlipSection(SlipTime);
+}
+
+void FSkeletalAnimationRateSection::UpdateSectionData()
+{
+	if (!&Section || !IsValid(&Section)) return;
+
+	const FFrameRate   FrameRate = Section.GetTypedOuter<UMovieScene>()->GetTickResolution();
+	const FFrameNumber StartFrame = Section.GetInclusiveStartFrame();
+	const FFrameNumber EndFrame = Section.GetExclusiveEndFrame()-1;
+	
+	const float AnimationStartPosition = FrameRate.AsSeconds(Section.Params.StartFrameOffset);
+	const float AnimationLength = Section.Params.GetSequenceLength();
+	const float SeqLengthSeconds = AnimationLength - FrameRate.AsSeconds(Section.Params.StartFrameOffset + Section.Params.EndFrameOffset);
+	const FFrameTime SequenceFrameLength = SeqLengthSeconds * FrameRate;
+	const double FrameIntervalTime = FrameRate.AsInterval();
+
+	if (SequenceFrameLength.FrameNumber > 1)
+	{
+		Section.Params.PlayPosition.Empty(SequenceFrameLength.FrameNumber.Value);
+
+		// 跳过第一帧
+		FFrameNumber CurrentFrameNumber = StartFrame + 1;
+		float CurrentAnimationPosition = 0;
+		Section.Params.PlayPosition.Add(AnimationStartPosition);
+		// 遍历每一帧
+		while (CurrentFrameNumber <= EndFrame)
+		{
+			float CurrentPlayRate;
+			Section.Params.PlayRate.Evaluate(CurrentFrameNumber, CurrentPlayRate);
+			CurrentAnimationPosition = FMath::Max(0.f, CurrentAnimationPosition + FMath::Fmod(FrameIntervalTime * CurrentPlayRate, SeqLengthSeconds));
+
+			Section.Params.PlayPosition.Add(AnimationStartPosition + CurrentAnimationPosition);
+
+			++CurrentFrameNumber;
+		}
+	}
 }
 
 bool FSkeletalAnimationRateSection::CreatePoseAsset(const TArray<UObject*> NewAssets, FGuid InObjectBinding)
@@ -398,7 +453,6 @@ void FSkeletalAnimationRateSection::HandleCreatePoseAsset(FGuid InObjectBinding)
 	}
 }
 
-
 void FSkeletalAnimationRateSection::BuildSectionContextMenu(FMenuBuilder& MenuBuilder, const FGuid& InObjectBinding)
 {
 	MenuBuilder.BeginSection(NAME_None, LOCTEXT("SkeletonMenuText", "Skeleton"));
@@ -413,7 +467,6 @@ void FSkeletalAnimationRateSection::BuildSectionContextMenu(FMenuBuilder& MenuBu
 
 	MenuBuilder.EndSection();
 }
-
 
 FSkeletalAnimationRateTrackEditor::FSkeletalAnimationRateTrackEditor(TSharedRef<ISequencer> InSequencer)
 	: FMovieSceneTrackEditor(InSequencer)
