@@ -408,13 +408,13 @@ FMovieSceneSkeletalAnimationRateSectionTemplate::FMovieSceneSkeletalAnimationRat
 	: Params(InSection.Params, InSection.GetInclusiveStartFrame(), InSection.GetExclusiveEndFrame())
 {
 }
-__pragma(optimize("", off))
+
 void FMovieSceneSkeletalAnimationRateSectionTemplate::Evaluate(const FMovieSceneEvaluationOperand& Operand, const FMovieSceneContext& Context, const FPersistentEvaluationData& PersistentData, FMovieSceneExecutionTokens& ExecutionTokens) const
 {
 	if (Params.Animation)
 	{
 		// calculate the time at which to evaluate the animation
-		float EvalTime = Params.MapTimeToAnimation(Context.GetTime());
+		float EvalTime = Params.MapTimeToAnimation(Context.GetTime(), Context.GetFrameRate());
 
 		float ManualWeight = 1.f;
 		Params.Weight.Evaluate(Context.GetTime(), ManualWeight);
@@ -441,8 +441,8 @@ void FMovieSceneSkeletalAnimationRateSectionTemplate::Evaluate(const FMovieScene
 	}
 }
 
-float FMovieSceneSkeletalAnimationRateSectionTemplateParameters::MapTimeToAnimation(FFrameTime InPosition) const
+float FMovieSceneSkeletalAnimationRateSectionTemplateParameters::MapTimeToAnimation(FFrameTime InPosition, FFrameRate FrameRate) const
 {
-	return PlayPosition[FMath::Min(PlayPosition.Num()-1, InPosition.GetFrame().Value)];
+	const FFrameNumber CurrentFrame = FFrameRate::TransformTime(InPosition, FrameRate, UMovieSceneSkeletalAnimationRateSection::CompressFrameRate).GetFrame();
+	return PlayPosition[FMath::Min(PlayPosition.Num()-1, CurrentFrame.Value)];
 }
-__pragma(optimize("", on))

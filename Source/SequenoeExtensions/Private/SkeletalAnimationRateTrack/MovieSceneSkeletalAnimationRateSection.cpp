@@ -11,6 +11,8 @@
 
 #define LOCTEXT_NAMESPACE "MovieSceneSkeletalAnimationRateSection"
 
+const FFrameRate UMovieSceneSkeletalAnimationRateSection::CompressFrameRate = FFrameRate(300, 1);
+
 namespace
 {
 	FName DefaultSlotName("DefaultSlot");
@@ -39,6 +41,7 @@ UMovieSceneSkeletalAnimationRateSection::UMovieSceneSkeletalAnimationRateSection
 	PlayRate_DEPRECATED = 1.f;
 	bReverse_DEPRECATED = false;
 	SlotName_DEPRECATED = DefaultSlotName;
+	Params.PlayRate.SetDefault(1.f);
 
 	BlendType = EMovieSceneBlendType::Absolute;
 	EvalOptions.EnableAndSetCompletionMode
@@ -248,10 +251,10 @@ void UMovieSceneSkeletalAnimationRateSection::GetSnapTimes(TArray<FFrameNumber>&
 	}
 }
 
-float UMovieSceneSkeletalAnimationRateSection::MapTimeToAnimation(FFrameTime InPosition) const
+float UMovieSceneSkeletalAnimationRateSection::MapTimeToAnimation(FFrameTime InPosition, FFrameRate InFrameRate) const
 {
 	FMovieSceneSkeletalAnimationRateSectionTemplateParameters TemplateParams(Params, GetInclusiveStartFrame(), GetExclusiveEndFrame());
-	return TemplateParams.MapTimeToAnimation(InPosition);
+	return TemplateParams.MapTimeToAnimation(InPosition, InFrameRate);
 }
 
 float UMovieSceneSkeletalAnimationRateSection::GetTotalWeightValue(FFrameTime InTime) const

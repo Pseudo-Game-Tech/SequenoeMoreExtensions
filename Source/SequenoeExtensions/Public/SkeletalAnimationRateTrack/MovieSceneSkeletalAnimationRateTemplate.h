@@ -18,7 +18,7 @@ struct FMovieSceneSkeletalAnimationRateSectionTemplateParameters : public FMovie
 		: FMovieSceneSkeletalAnimationRateParams(BaseParams)
 	{}
 
-	float MapTimeToAnimation(FFrameTime InPosition) const;
+	float MapTimeToAnimation(FFrameTime InPosition, FFrameRate FrameRate) const;
 
 	/*UPROPERTY()
 		FFrameNumber SectionStartTime;

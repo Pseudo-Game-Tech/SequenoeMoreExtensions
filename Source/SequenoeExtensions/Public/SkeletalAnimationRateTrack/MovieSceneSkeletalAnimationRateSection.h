@@ -77,11 +77,14 @@ class UMovieSceneSkeletalAnimationRateSection
 
 public:
 
+	/* 实际Params.PlayPosition中保存得帧率,减少数据量 */
+	SEQUENOEEXTENSIONS_API const static FFrameRate CompressFrameRate;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation", meta = (ShowOnlyInnerProperties))
 		FMovieSceneSkeletalAnimationRateParams Params;
 
 	/** Get Frame Time as Animation Time*/
-	SEQUENOEEXTENSIONS_API float MapTimeToAnimation(FFrameTime InPosition) const;
+	SEQUENOEEXTENSIONS_API float MapTimeToAnimation(FFrameTime InPosition, FFrameRate InFrameRate) const;
 
 protected:
 

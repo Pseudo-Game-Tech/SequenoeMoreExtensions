@@ -252,7 +252,7 @@ int32 FSkeletalAnimationRateSection::OnPaintSection(FSequencerSectionPainter& Pa
 			const float Time = TimeToPixelConverter.FrameToPixel(CurrentTime);
 
 			// Draw the current time next to the scrub handle
-			const float AnimTime = Section.MapTimeToAnimation(CurrentTime);
+			const float AnimTime = Section.MapTimeToAnimation(CurrentTime, TickResolution);
 			int32 FrameTime = Section.Params.Animation->GetFrameAtTime(AnimTime);
 			FString FrameString = FString::FromInt(FrameTime);
 
@@ -356,15 +356,18 @@ void FSkeletalAnimationRateSection::UpdateSectionData()
 {
 	if (!&Section || !IsValid(&Section)) return;
 
-	const FFrameRate   FrameRate = Section.GetTypedOuter<UMovieScene>()->GetTickResolution();
-	const FFrameNumber StartFrame = Section.GetInclusiveStartFrame();
-	const FFrameNumber EndFrame = Section.GetExclusiveEndFrame()-1;
+	const FFrameRate CompressFrameRate = UMovieSceneSkeletalAnimationRateSection::CompressFrameRate;
+	const FFrameRate FrameRate = Section.GetTypedOuter<UMovieScene>()->GetTickResolution();
+
+	const FFrameNumber StartFrame = FFrameRate::TransformTime(Section.GetInclusiveStartFrame(), FrameRate, CompressFrameRate).GetFrame();
+	const FFrameNumber EndFrame = FFrameRate::TransformTime(Section.GetExclusiveEndFrame(), FrameRate, CompressFrameRate).GetFrame()-1;
 	
 	const float AnimationStartPosition = FrameRate.AsSeconds(Section.Params.StartFrameOffset);
 	const float AnimationLength = Section.Params.GetSequenceLength();
 	const float SeqLengthSeconds = AnimationLength - FrameRate.AsSeconds(Section.Params.StartFrameOffset + Section.Params.EndFrameOffset);
-	const FFrameTime SequenceFrameLength = SeqLengthSeconds * FrameRate;
-	const double FrameIntervalTime = FrameRate.AsInterval();
+
+	const FFrameTime SequenceFrameLength = SeqLengthSeconds * CompressFrameRate;
+	const double FrameIntervalTime = CompressFrameRate.AsInterval();
 
 	if (SequenceFrameLength.FrameNumber > 1)
 	{
@@ -378,8 +381,8 @@ void FSkeletalAnimationRateSection::UpdateSectionData()
 		while (CurrentFrameNumber <= EndFrame)
 		{
 			float CurrentPlayRate;
-			Section.Params.PlayRate.Evaluate(CurrentFrameNumber, CurrentPlayRate);
-			CurrentAnimationPosition = FMath::Max(0.f, CurrentAnimationPosition + FMath::Fmod(FrameIntervalTime * CurrentPlayRate, SeqLengthSeconds));
+			Section.Params.PlayRate.Evaluate(FFrameRate::TransformTime(CurrentFrameNumber, CompressFrameRate, FrameRate), CurrentPlayRate);
+			CurrentAnimationPosition = FMath::Max(0.f, FMath::Fmod(CurrentAnimationPosition + FrameIntervalTime * CurrentPlayRate, SeqLengthSeconds));
 
 			Section.Params.PlayPosition.Add(AnimationStartPosition + CurrentAnimationPosition);
 
