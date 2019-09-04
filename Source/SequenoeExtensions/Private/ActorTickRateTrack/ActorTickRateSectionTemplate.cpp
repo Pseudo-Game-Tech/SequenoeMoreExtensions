@@ -11,7 +11,7 @@
 #include "IMovieScenePlayer.h"
 #include "Particles/Emitter.h"
 #include "Particles/ParticleSystemComponent.h"
-#pragma optimize("", off)
+
 struct FActorTickRateTrackToken
 {
 	FActorTickRateTrackToken(float InActorTickRateValue)
@@ -113,4 +113,3 @@ void FActorTickRateSectionTemplate::Evaluate(const FMovieSceneEvaluationOperand&
 		ExecutionTokens.Add(FActorTickRateExecutionToken(ActorTickRateValue));
 	}
 }
-#pragma optimize("", on)
