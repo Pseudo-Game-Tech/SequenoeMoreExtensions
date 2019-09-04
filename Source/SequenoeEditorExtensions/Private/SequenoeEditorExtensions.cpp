@@ -6,6 +6,7 @@
 #include "ILevelSequenceModule.h"
 #include "LevelSequenceEditorUmgSpawner.h"
 #include "SkeletalAnimationRateTrackEditor.h"
+#include "ActorTickRateEditorTrack.h"
 
 #define LOCTEXT_NAMESPACE "FSequenoeEditorExtensionsModule"
 
@@ -14,6 +15,7 @@ void FSequenoeEditorExtensionsModule::StartupModule()
 	ISequencerModule& SequencerModule = FModuleManager::Get().LoadModuleChecked<ISequencerModule>("Sequencer");
 	StaringTrackEditorDelegateHandle = SequencerModule.RegisterTrackEditor(FOnCreateTrackEditor::CreateStatic(&FStaringTrackEditor::CreateTrackEditor));
 	SkeletalAnimationRateTrackEditorDelegateHandle = SequencerModule.RegisterTrackEditor(FOnCreateTrackEditor::CreateStatic(&FSkeletalAnimationRateTrackEditor::CreateTrackEditor));
+	ActorTickRateEditorTrackDelegateHandle = SequencerModule.RegisterTrackEditor(FOnCreateTrackEditor::CreateStatic(&FActorTickRateEditorTrack::CreateTrackEditor));
 
 	ILevelSequenceModule& LevelSequenceModule = FModuleManager::LoadModuleChecked<ILevelSequenceModule>("LevelSequence");
 	LevelSequenceEditorUmgSpawnerDelegateHandle = LevelSequenceModule.RegisterObjectSpawner(FOnCreateMovieSceneObjectSpawner::CreateStatic(&FLevelSequenceEditorUmgSpawner::CreateObjectSpawner));
@@ -24,6 +26,7 @@ void FSequenoeEditorExtensionsModule::ShutdownModule()
 	ISequencerModule& SequencerModule = FModuleManager::Get().LoadModuleChecked<ISequencerModule>("Sequencer");
 	SequencerModule.UnRegisterTrackEditor(StaringTrackEditorDelegateHandle);
 	SequencerModule.UnRegisterTrackEditor(SkeletalAnimationRateTrackEditorDelegateHandle);
+	SequencerModule.UnRegisterTrackEditor(ActorTickRateEditorTrackDelegateHandle);
 
 	ILevelSequenceModule& LevelSequenceModule = FModuleManager::LoadModuleChecked<ILevelSequenceModule>("LevelSequence");
 	LevelSequenceModule.UnregisterObjectSpawner(LevelSequenceEditorUmgSpawnerDelegateHandle);

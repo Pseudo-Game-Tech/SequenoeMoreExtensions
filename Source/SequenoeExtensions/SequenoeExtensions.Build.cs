@@ -13,6 +13,7 @@ public class SequenoeExtensions : ModuleRules
                 "SequenoeExtensions/Private/Staring",
                 "SequenoeExtensions/Private/LevelSequenceUmg",
 				"SequenoeExtensions/Private/SkeletalAnimationRateTrack",
+				"SequenoeExtensions/Private/ActorTickRateTrack",
 			}
 			);
 			
@@ -23,7 +24,8 @@ public class SequenoeExtensions : ModuleRules
 				"Core",
                 "CoreUObject",
 				"MovieScene",
-				"Engine",
+                "MovieSceneTracks",
+                "Engine",
                 "UMG",
             }
 			);

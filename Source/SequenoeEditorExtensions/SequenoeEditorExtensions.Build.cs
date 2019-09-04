@@ -20,6 +20,8 @@ public class SequenoeEditorExtensions : ModuleRules
                 "SequenoeEditorExtensions/Private/Staring",
                 "SequenoeEditorExtensions/Private/LevelSequenceEditorUmg",
                 "SequenoeEditorExtensions/Private/SkeletalAnimationRateTrack",
+	            "SequenoeEditorExtensions/Private/ActorTickRateTrack",
+	            "SequenoeEditorExtensions/Private/PropertyTrackEditors",
             }
             );
 
