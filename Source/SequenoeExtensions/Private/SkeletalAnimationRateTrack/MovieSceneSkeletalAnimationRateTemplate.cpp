@@ -443,6 +443,7 @@ void FMovieSceneSkeletalAnimationRateSectionTemplate::Evaluate(const FMovieScene
 
 float FMovieSceneSkeletalAnimationRateSectionTemplateParameters::MapTimeToAnimation(FFrameTime InPosition, FFrameRate FrameRate) const
 {
+	InPosition = InPosition - SectionStartTime;
 	const FFrameNumber CurrentFrame = FFrameRate::TransformTime(InPosition, FrameRate, UMovieSceneSkeletalAnimationRateSection::CompressFrameRate).GetFrame();
-	return PlayPosition[FMath::Min(PlayPosition.Num()-1, CurrentFrame.Value)];
+	return PlayPosition[FMath::Clamp(CurrentFrame.Value, 0, PlayPosition.Num()-1)];
 }
