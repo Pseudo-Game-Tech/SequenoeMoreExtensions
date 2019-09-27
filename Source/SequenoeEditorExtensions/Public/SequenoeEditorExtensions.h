@@ -19,6 +19,8 @@ private:
 	FDelegateHandle StaringTrackEditorDelegateHandle;
 	FDelegateHandle SkeletalAnimationRateTrackEditorDelegateHandle;
 	FDelegateHandle ActorTickRateEditorTrackDelegateHandle;
+	FDelegateHandle TextEditorTrackEditorDelegateHandle;
+	FDelegateHandle NameEditorTrackEditorDelegateHandle;
 
 	FDelegateHandle LevelSequenceEditorUmgSpawnerDelegateHandle;
 };
