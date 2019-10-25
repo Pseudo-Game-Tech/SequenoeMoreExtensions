@@ -38,8 +38,6 @@ public class SequenoeExtensions : ModuleRules
                 "SlateCore",
                 "Slate",
                 "LevelSequence",
-                "Sequencer",
-                "EditorWidgets",
                 "AnimGraphRuntime",
             }
 			);

@@ -11,7 +11,7 @@
 #include "PropertyTrackEditors/NamePropertyTrackEditor.h"
 #include "UObject/TextProperty.h"
 #include "ActorTickRateEditorTrack.h"
-#include "Channels/MovieSceneChannelEditors.h"
+#include "ChannelEditor/MovieSceneChannelEditors.h"
 
 #define LOCTEXT_NAMESPACE "FSequenoeEditorExtensionsModule"
 

@@ -44,8 +44,6 @@ public class SequenoeEditorExtensions : ModuleRules
                 "CinematicCamera",
                 "Slate",
                 "SlateCore",
-                "EditorStyle",
-                "EditorWidgets",
                 "ActorPickerMode",
                 "UnrealEd",
                 "Engine",

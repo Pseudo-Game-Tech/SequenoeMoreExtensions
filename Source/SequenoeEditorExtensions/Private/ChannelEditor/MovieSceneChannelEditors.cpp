@@ -1,4 +1,4 @@
-#include "Channels/MovieSceneChannelEditors.h"
+#include "ChannelEditor/MovieSceneChannelEditors.h"
 #include "Widgets/Input/SEditableText.h"
 #include "ScopedTransaction.h"
 #include "PropertyTracks/MovieSceneTextSection.h"
@@ -19,7 +19,7 @@ namespace
 
 		virtual bool IsMultiLineText() const override
 		{
-			return true;
+			return false;
 		}
 
 		virtual bool IsPassword() const override

@@ -27,7 +27,7 @@ namespace MovieSceneClipboard
 }
 
 template<typename ChannelType, typename ValueType>
-struct SEQUENOEEXTENSIONS_API TSequencerKeyEditor
+struct TSequencerKeyEditor
 {
 	TSequencerKeyEditor()
 	{}
@@ -205,7 +205,7 @@ private:
 
 using TextKeyEditor = TSequencerKeyEditor<FMovieSceneTextChannel, FText>;
 
-class SEQUENOEEXTENSIONS_API STextCurveKeyEditor : public SCompoundWidget
+class STextCurveKeyEditor : public SCompoundWidget
 {
 public:
 	SLATE_BEGIN_ARGS(STextCurveKeyEditor) {}
@@ -214,7 +214,7 @@ public:
 	void Construct(const FArguments& InArgs, const TextKeyEditor& InKeyEditor);
 };
 
-struct SEQUENOEEXTENSIONS_API MovieSceneTextChannelEditor : TSequencerChannelInterface<FMovieSceneTextChannel>
+struct MovieSceneTextChannelEditor : TSequencerChannelInterface<FMovieSceneTextChannel>
 {
 	bool CanCreateKeyEditor_Raw(const FMovieSceneChannel* InChannel) const override
 	{
@@ -241,7 +241,7 @@ struct SEQUENOEEXTENSIONS_API MovieSceneTextChannelEditor : TSequencerChannelInt
 
 using NameKeyEditor = TSequencerKeyEditor<FMovieSceneNameChannel, FName>;
 
-class SEQUENOEEXTENSIONS_API SNameCurveKeyEditor : public SCompoundWidget
+class SNameCurveKeyEditor : public SCompoundWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SNameCurveKeyEditor) {}
@@ -257,7 +257,7 @@ private:
 	NameKeyEditor KeyEditor;
 };
 
-struct SEQUENOEEXTENSIONS_API MovieSceneNameChannelEditor : TSequencerChannelInterface<FMovieSceneNameChannel>
+struct MovieSceneNameChannelEditor : TSequencerChannelInterface<FMovieSceneNameChannel>
 {
 	bool CanCreateKeyEditor_Raw(const FMovieSceneChannel* InChannel) const override
 	{
